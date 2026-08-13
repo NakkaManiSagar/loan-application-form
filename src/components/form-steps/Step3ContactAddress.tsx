@@ -92,7 +92,7 @@ export const Step3ContactAddress: React.FC = () => {
     }
     setIsVerifyingMobileOtp(true);
     try {
-      const res = await verifyMobileOtpAPI(mobileOtpInput);
+      const res = await verifyMobileOtpAPI(mobileOtpInput, mobile);
       if (res.verified) {
         updateStep3({ mobileVerified: true });
         setShowMobileOtpModal(false);

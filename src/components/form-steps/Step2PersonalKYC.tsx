@@ -25,7 +25,7 @@ export const Step2PersonalKYC: React.FC = () => {
     }
     setIsVerifyingPan(true);
     try {
-      const res = await verifyPanAPI(panNumber);
+      const res = await verifyPanAPI(panNumber, fullName, state.step1.loanType);
       if (res.valid) {
         updateStep2({ panVerified: true, panHolderName: res.name });
         showToast(res.message, 'success');
@@ -50,7 +50,7 @@ export const Step2PersonalKYC: React.FC = () => {
       if (res.success) {
         setOtpMessage(res.message);
         setShowOtpModal(true);
-        showToast('OTP sent to registered mobile!', 'info');
+        showToast('Real-time OTP dispatched to registered mobile!', 'info');
       } else {
         showToast(res.message, 'error');
       }
@@ -66,7 +66,7 @@ export const Step2PersonalKYC: React.FC = () => {
     }
     setIsVerifyingOtp(true);
     try {
-      const res = await verifyAadhaarOtpAPI(otpInput);
+      const res = await verifyAadhaarOtpAPI(otpInput, aadhaarNumber);
       if (res.verified) {
         updateStep2({ aadhaarVerified: true });
         setShowOtpModal(false);
