@@ -407,12 +407,12 @@ export const Step3ContactAddress: React.FC = () => {
 
             <div className="space-y-2">
               <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                6-Digit Security Code (Default Test Code: 123456)
+                6-Digit Security Code
               </label>
               <input
                 type="text"
                 maxLength={6}
-                placeholder="123456"
+                placeholder="Enter 6-digit OTP"
                 value={mobileOtpInput}
                 onChange={(e) => setMobileOtpInput(e.target.value.replace(/\D/g, ''))}
                 className="w-full text-center tracking-[0.5em] font-mono text-xl py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500"

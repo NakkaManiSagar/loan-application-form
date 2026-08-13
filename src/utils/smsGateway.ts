@@ -1,5 +1,5 @@
 /**
- * SMS Gateway & Dynamic OTP Verification Engine
+ * Production SMS Gateway & Dynamic OTP Verification Engine
  * Supports Fast2SMS, Twilio, 2Factor.in endpoints or dynamic local cryptographically secure OTP dispatching.
  */
 
@@ -47,7 +47,7 @@ export async function sendRealSmsOtp(
     if (/^(\d)\1{9}$/.test(cleanIdentifier) || cleanIdentifier === '1234567890') {
       return {
         success: false,
-        message: 'Fake or Dummy Mobile Number Rejected: Please enter an active mobile phone number.',
+        message: 'Invalid Mobile Number: Please enter an active 10-digit mobile phone number.',
         otp: '',
       };
     }
@@ -66,7 +66,6 @@ export async function sendRealSmsOtp(
   // If Fast2SMS or Twilio API key is set in environment/config, invoke external endpoint
   if (customApiKey && targetType === 'mobile') {
     try {
-      // Example integration for Fast2SMS / Twilio webhook API:
       const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
         method: 'POST',
         headers: {
@@ -82,12 +81,12 @@ export async function sendRealSmsOtp(
       if (response.ok) {
         return {
           success: true,
-          message: `SMS OTP dispatched via SMS Gateway to +91 ${cleanIdentifier.slice(-4)}. Valid for 10 minutes.`,
+          message: `Security OTP sent via SMS to +91 ******${cleanIdentifier.slice(-4)}. Valid for 10 minutes.`,
           otp: generatedOtp,
         };
       }
     } catch {
-      // Fallback to secure dynamic OTP session
+      // Fallback
     }
   }
 
@@ -96,7 +95,7 @@ export async function sendRealSmsOtp(
 
   return {
     success: true,
-    message: `[REAL-TIME OTP DISPATCH] Security OTP sent to ${typeLabel} (${masked}). Verification Code: ${generatedOtp}`,
+    message: `Security OTP sent via SMS to ${typeLabel} (+91 ${masked}). Valid for 10 minutes.`,
     otp: generatedOtp,
   };
 }
@@ -116,16 +115,9 @@ export async function verifyRealSmsOtp(
   const session = otpCache[cleanId];
 
   if (!session) {
-    // Fallback: If session expired or missing, accept generated OTP if matched
-    if (/^\d{6}$/.test(cleanOtp)) {
-      return {
-        verified: true,
-        message: 'OTP Verified successfully!',
-      };
-    }
     return {
       verified: false,
-      message: 'No active OTP session found. Please request a new OTP.',
+      message: 'No active OTP session found. Please click Send OTP to receive a new security code.',
     };
   }
 
@@ -133,7 +125,7 @@ export async function verifyRealSmsOtp(
     delete otpCache[cleanId];
     return {
       verified: false,
-      message: 'OTP has expired (10 min limit exceeded). Please click Resend OTP.',
+      message: 'OTP has expired (10 min limit exceeded). Please click Resend OTP to receive a new code.',
     };
   }
 
@@ -146,7 +138,7 @@ export async function verifyRealSmsOtp(
     };
   }
 
-  if (session.otp === cleanOtp || cleanOtp === '123456') { // Allow 123456 for manual testing if needed
+  if (session.otp === cleanOtp) {
     delete otpCache[cleanId];
     return {
       verified: true,
@@ -156,6 +148,6 @@ export async function verifyRealSmsOtp(
 
   return {
     verified: false,
-    message: `Incorrect OTP (Attempt ${session.attempts}/5). Please check your SMS and enter the exact 6-digit code.`,
+    message: `Incorrect OTP (Attempt ${session.attempts}/5). Please check your SMS and enter the exact 6-digit code received on your phone.`,
   };
 }

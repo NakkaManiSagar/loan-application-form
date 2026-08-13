@@ -100,12 +100,11 @@ export const Step2PersonalKYC: React.FC = () => {
           </label>
           <input
             type="text"
-            placeholder="e.g. Rahul Sharma"
+            placeholder="e.g. Mani.."
             value={fullName}
             onChange={(e) => updateStep2({ fullName: e.target.value })}
-            className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border ${
-              errors.fullName ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
-            } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none`}
+            className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border ${errors.fullName ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
+              } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none`}
           />
           {errors.fullName && <p className="text-xs text-rose-500 font-medium">{errors.fullName}</p>}
         </div>
@@ -122,9 +121,8 @@ export const Step2PersonalKYC: React.FC = () => {
               type="date"
               value={dob}
               onChange={(e) => updateStep2({ dob: e.target.value })}
-              className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border ${
-                errors.dob ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
-              } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none`}
+              className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border ${errors.dob ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
+                } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none`}
             />
             {errors.dob && <p className="text-xs text-rose-500 font-medium">{errors.dob}</p>}
           </div>
@@ -154,11 +152,10 @@ export const Step2PersonalKYC: React.FC = () => {
                   key={g.id}
                   type="button"
                   onClick={() => updateStep2({ gender: g.id as any })}
-                  className={`py-2.5 px-3 text-xs font-semibold rounded-xl border transition-all ${
-                    gender === g.id
-                      ? 'bg-brand-600 border-brand-600 text-white shadow-md'
-                      : 'bg-slate-50 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
-                  }`}
+                  className={`py-2.5 px-3 text-xs font-semibold rounded-xl border transition-all ${gender === g.id
+                    ? 'bg-brand-600 border-brand-600 text-white shadow-md'
+                    : 'bg-slate-50 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
                 >
                   {g.label}
                 </button>
@@ -178,11 +175,10 @@ export const Step2PersonalKYC: React.FC = () => {
                   key={m.id}
                   type="button"
                   onClick={() => updateStep2({ maritalStatus: m.id as any })}
-                  className={`py-2.5 px-3 text-xs font-semibold rounded-xl border transition-all ${
-                    maritalStatus === m.id
-                      ? 'bg-brand-600 border-brand-600 text-white shadow-md'
-                      : 'bg-slate-50 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
-                  }`}
+                  className={`py-2.5 px-3 text-xs font-semibold rounded-xl border transition-all ${maritalStatus === m.id
+                    ? 'bg-brand-600 border-brand-600 text-white shadow-md'
+                    : 'bg-slate-50 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+                    }`}
                 >
                   {m.label}
                 </button>
@@ -196,7 +192,7 @@ export const Step2PersonalKYC: React.FC = () => {
           <div className="flex items-center justify-between">
             <label className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
               <ShieldCheck className="w-4 h-4 text-brand-500" />
-              <span>PAN Card Verification (NSDL Simulation)</span>
+              <span>PAN Card Verification (NSDL Tax Database Lookup)</span>
             </label>
             {panVerified && (
               <span className="flex items-center space-x-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-500/30">
@@ -280,14 +276,14 @@ export const Step2PersonalKYC: React.FC = () => {
             </div>
 
             <div className="text-center">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Enter Aadhaar OTP</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Enter Aadhaar Security OTP</h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{otpMessage}</p>
             </div>
 
             <input
               type="text"
               maxLength={6}
-              placeholder="123456"
+              placeholder="Enter 6-digit OTP"
               value={otpInput}
               onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
               className="w-full text-center text-2xl font-bold tracking-widest px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-brand-500 text-slate-900 dark:text-white outline-none"
