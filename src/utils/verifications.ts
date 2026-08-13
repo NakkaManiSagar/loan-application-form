@@ -64,18 +64,22 @@ export async function verifyPanAPI(pan: string): Promise<PanVerificationResult> 
 /**
  * Simulates Aadhaar SMS OTP Generation
  */
-export async function generateAadhaarOtpAPI(aadhaarNumber: string): Promise<{ success: boolean; message: string; mockOtp: string }> {
+export async function generateAadhaarOtpAPI(aadhaarNumber: string, mobileNumber?: string): Promise<{ success: boolean; message: string; mockOtp: string }> {
   await new Promise((resolve) => setTimeout(resolve, 600));
   
   if (aadhaarNumber.length !== 12) {
     return { success: false, message: 'Aadhaar number must be 12 digits', mockOtp: '' };
   }
 
-  const maskedMobile = '******' + Math.floor(1000 + Math.random() * 9000).toString();
+  const last4 = (mobileNumber && mobileNumber.length >= 4)
+    ? mobileNumber.slice(-4)
+    : (aadhaarNumber.length >= 4 ? aadhaarNumber.slice(-4) : '9876');
+  const maskedMobile = '******' + last4;
+  
   // Fixed demo OTP for user convenience + random generator
   return {
     success: true,
-    message: `OTP sent to mobile linked with Aadhaar (${maskedMobile}). Use test OTP: 123456`,
+    message: `OTP sent to mobile linked with Aadhaar (+91 ${maskedMobile}). Use test OTP: 123456`,
     mockOtp: '123456',
   };
 }
@@ -96,6 +100,43 @@ export async function verifyAadhaarOtpAPI(userOtp: string, expectedOtp: string =
   return {
     verified: false,
     message: 'Invalid OTP. Please enter the 6-digit OTP sent to your registered mobile (Test OTP: 123456).',
+  };
+}
+
+/**
+ * Simulates Direct Mobile SMS OTP Generation for applicant's entered mobile number
+ */
+export async function generateMobileOtpAPI(mobileNumber: string): Promise<{ success: boolean; message: string; mockOtp: string }> {
+  await new Promise((resolve) => setTimeout(resolve, 600));
+  
+  if (!mobileNumber || mobileNumber.length !== 10) {
+    return { success: false, message: 'Please enter a valid 10-digit mobile number starting with 6-9', mockOtp: '' };
+  }
+
+  const masked = '******' + mobileNumber.slice(-4);
+  return {
+    success: true,
+    message: `OTP sent successfully to +91 ${masked}. Use test OTP: 123456`,
+    mockOtp: '123456',
+  };
+}
+
+/**
+ * Simulates Mobile OTP Verification
+ */
+export async function verifyMobileOtpAPI(userOtp: string, expectedOtp: string = '123456'): Promise<{ verified: boolean; message: string }> {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  
+  if (userOtp === expectedOtp || userOtp === '123456') {
+    return {
+      verified: true,
+      message: 'Mobile number verified successfully!',
+    };
+  }
+
+  return {
+    verified: false,
+    message: 'Invalid OTP. Please enter the 6-digit OTP sent to your mobile (Test OTP: 123456).',
   };
 }
 

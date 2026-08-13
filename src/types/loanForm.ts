@@ -81,6 +81,7 @@ export interface FormStep2 {
 export interface FormStep3 {
   email: string;
   mobile: string;
+  mobileVerified?: boolean;
   residenceType: ResidenceType;
   currentAddress: Address;
   sameAsCurrent: boolean;

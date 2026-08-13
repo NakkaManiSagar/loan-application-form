@@ -3,6 +3,8 @@ import {
   verifyPanAPI, 
   generateAadhaarOtpAPI, 
   verifyAadhaarOtpAPI, 
+  generateMobileOtpAPI,
+  verifyMobileOtpAPI,
   lookupIfscAPI, 
   lookupPincodeAPI 
 } from '../utils/verifications';
@@ -21,9 +23,10 @@ describe('Simulated KYC & Financial Verification APIs', () => {
     expect(res.message).toContain('Invalid PAN format');
   });
 
-  it('should generate Aadhaar SMS OTP', async () => {
-    const res = await generateAadhaarOtpAPI('987654321012');
+  it('should generate Aadhaar SMS OTP using entered mobile number', async () => {
+    const res = await generateAadhaarOtpAPI('987654321012', '9876543210');
     expect(res.success).toBe(true);
+    expect(res.message).toContain('3210');
     expect(res.mockOtp).toBe('123456');
   });
 
@@ -35,6 +38,18 @@ describe('Simulated KYC & Financial Verification APIs', () => {
   it('should reject incorrect Aadhaar OTP', async () => {
     const res = await verifyAadhaarOtpAPI('000000');
     expect(res.verified).toBe(false);
+  });
+
+  it('should generate Mobile SMS OTP for entered mobile number', async () => {
+    const res = await generateMobileOtpAPI('9988776655');
+    expect(res.success).toBe(true);
+    expect(res.message).toContain('6655');
+    expect(res.mockOtp).toBe('123456');
+  });
+
+  it('should verify correct Mobile OTP', async () => {
+    const res = await verifyMobileOtpAPI('123456');
+    expect(res.verified).toBe(true);
   });
 
   it('should lookup RBI IFSC bank branch details', async () => {

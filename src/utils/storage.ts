@@ -24,6 +24,7 @@ export const INITIAL_FORM_STATE: FormState = {
   step3: {
     email: '',
     mobile: '',
+    mobileVerified: false,
     residenceType: 'rented',
     currentAddress: { street: '', city: '', state: '', pincode: '' },
     sameAsCurrent: true,

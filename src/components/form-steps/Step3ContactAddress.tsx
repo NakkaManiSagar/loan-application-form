@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { useFormContext } from '../../context/FormContext';
-import { lookupPincodeAPI } from '../../utils/verifications';
-import { Mail, Phone, MapPin, Building, ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
+import { lookupPincodeAPI, generateMobileOtpAPI, verifyMobileOtpAPI } from '../../utils/verifications';
+import { Mail, Phone, MapPin, Building, ArrowRight, ArrowLeft, Loader2, KeyRound, CheckCircle2, ShieldCheck, X } from 'lucide-react';
 
 export const Step3ContactAddress: React.FC = () => {
   const { state, updateStep3, nextStep, prevStep, errors, showToast } = useFormContext();
-  const { email, mobile, residenceType, currentAddress, sameAsCurrent, permanentAddress, yearsAtCurrentAddress } = state.step3;
+  const { email, mobile, mobileVerified, residenceType, currentAddress, sameAsCurrent, permanentAddress, yearsAtCurrentAddress } = state.step3;
 
   const [isSearchingPin, setIsSearchingPin] = useState(false);
   const [isSearchingPermPin, setIsSearchingPermPin] = useState(false);
+
+  const [showMobileOtpModal, setShowMobileOtpModal] = useState(false);
+  const [mobileOtpInput, setMobileOtpInput] = useState('');
+  const [isSendingMobileOtp, setIsSendingMobileOtp] = useState(false);
+  const [isVerifyingMobileOtp, setIsVerifyingMobileOtp] = useState(false);
+  const [mobileOtpMessage, setMobileOtpMessage] = useState('');
 
   // Current Pincode Lookup
   const handleCurrentPincodeLookup = async (pin: string) => {
@@ -58,6 +64,47 @@ export const Step3ContactAddress: React.FC = () => {
     }
   };
 
+  // Mobile OTP Handlers
+  const handleSendMobileOtp = async () => {
+    if (!mobile || mobile.length !== 10) {
+      showToast('Please enter a valid 10-digit mobile number', 'error');
+      return;
+    }
+    setIsSendingMobileOtp(true);
+    try {
+      const res = await generateMobileOtpAPI(mobile);
+      if (res.success) {
+        setMobileOtpMessage(res.message);
+        setShowMobileOtpModal(true);
+        showToast('OTP sent to your mobile number!', 'info');
+      } else {
+        showToast(res.message, 'error');
+      }
+    } finally {
+      setIsSendingMobileOtp(false);
+    }
+  };
+
+  const handleConfirmMobileOtp = async () => {
+    if (!mobileOtpInput || mobileOtpInput.length !== 6) {
+      showToast('Enter 6-digit OTP', 'error');
+      return;
+    }
+    setIsVerifyingMobileOtp(true);
+    try {
+      const res = await verifyMobileOtpAPI(mobileOtpInput);
+      if (res.verified) {
+        updateStep3({ mobileVerified: true });
+        setShowMobileOtpModal(false);
+        showToast('Mobile number verified successfully!', 'success');
+      } else {
+        showToast(res.message, 'error');
+      }
+    } finally {
+      setIsVerifyingMobileOtp(false);
+    }
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
@@ -91,10 +138,18 @@ export const Step3ContactAddress: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-900 dark:text-white flex items-center space-x-2">
-              <Phone className="w-4 h-4 text-brand-500" />
-              <span>Mobile Number</span>
-              <span className="text-rose-500">*</span>
+            <label className="text-sm font-semibold text-slate-900 dark:text-white flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Phone className="w-4 h-4 text-brand-500" />
+                <span>Mobile Number</span>
+                <span className="text-rose-500">*</span>
+              </div>
+              {mobileVerified && (
+                <span className="inline-flex items-center text-xs font-semibold text-emerald-600 dark:text-emerald-400 space-x-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Verified</span>
+                </span>
+              )}
             </label>
             <div className="flex">
               <span className="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-sm font-bold">
@@ -105,13 +160,33 @@ export const Step3ContactAddress: React.FC = () => {
                 maxLength={10}
                 placeholder="9876543210"
                 value={mobile}
-                onChange={(e) => updateStep3({ mobile: e.target.value.replace(/\D/g, '') })}
+                onChange={(e) => updateStep3({ mobile: e.target.value.replace(/\D/g, ''), mobileVerified: false })}
                 className={`flex-1 px-4 py-3 rounded-r-xl bg-slate-50 dark:bg-slate-950 border ${
                   errors.mobile ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
                 } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none font-mono`}
               />
             </div>
             {errors.mobile && <p className="text-xs text-rose-500 font-medium">{errors.mobile}</p>}
+
+            <button
+              type="button"
+              onClick={handleSendMobileOtp}
+              disabled={isSendingMobileOtp || mobileVerified || mobile.length !== 10}
+              className={`mt-2 flex items-center justify-center space-x-2 w-full py-2.5 px-3 rounded-xl text-xs font-semibold transition-all ${
+                mobileVerified
+                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 cursor-default'
+                  : 'bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800 hover:bg-brand-100 dark:hover:bg-brand-900 disabled:opacity-50 disabled:cursor-not-allowed'
+              }`}
+            >
+              {isSendingMobileOtp ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : mobileVerified ? (
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              ) : (
+                <KeyRound className="w-4 h-4" />
+              )}
+              <span>{mobileVerified ? 'Mobile Verified via SMS OTP' : 'Send OTP to Entered Mobile'}</span>
+            </button>
           </div>
         </div>
 
@@ -309,6 +384,61 @@ export const Step3ContactAddress: React.FC = () => {
           <ArrowRight className="w-5 h-5" />
         </button>
       </div>
+
+      {/* Mobile SMS OTP Modal */}
+      {showMobileOtpModal && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-5 relative">
+            <button
+              onClick={() => setShowMobileOtpModal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-full bg-brand-500/10 text-brand-500 flex items-center justify-center">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Enter Mobile Verification OTP</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{mobileOtpMessage}</p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                6-Digit Security Code (Default Test Code: 123456)
+              </label>
+              <input
+                type="text"
+                maxLength={6}
+                placeholder="123456"
+                value={mobileOtpInput}
+                onChange={(e) => setMobileOtpInput(e.target.value.replace(/\D/g, ''))}
+                className="w-full text-center tracking-[0.5em] font-mono text-xl py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500"
+              />
+            </div>
+
+            <div className="flex space-x-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowMobileOtpModal(false)}
+                className="flex-1 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmMobileOtp}
+                disabled={isVerifyingMobileOtp}
+                className="flex-1 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold flex items-center justify-center space-x-2"
+              >
+                {isVerifyingMobileOtp ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm OTP'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -46,7 +46,7 @@ export const Step2PersonalKYC: React.FC = () => {
     }
     setIsSendingOtp(true);
     try {
-      const res = await generateAadhaarOtpAPI(aadhaarNumber);
+      const res = await generateAadhaarOtpAPI(aadhaarNumber, state.step3.mobile);
       if (res.success) {
         setOtpMessage(res.message);
         setShowOtpModal(true);
