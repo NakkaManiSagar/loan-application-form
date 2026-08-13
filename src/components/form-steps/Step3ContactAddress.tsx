@@ -130,9 +130,8 @@ export const Step3ContactAddress: React.FC = () => {
               placeholder="e.g. rahul.sharma@example.com"
               value={email}
               onChange={(e) => updateStep3({ email: e.target.value })}
-              className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border ${
-                errors.email ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
-              } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none`}
+              className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border ${errors.email ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
+                } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none`}
             />
             {errors.email && <p className="text-xs text-rose-500 font-medium">{errors.email}</p>}
           </div>
@@ -161,9 +160,8 @@ export const Step3ContactAddress: React.FC = () => {
                 placeholder="9876543210"
                 value={mobile}
                 onChange={(e) => updateStep3({ mobile: e.target.value.replace(/\D/g, ''), mobileVerified: false })}
-                className={`flex-1 px-4 py-3 rounded-r-xl bg-slate-50 dark:bg-slate-950 border ${
-                  errors.mobile ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
-                } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none font-mono`}
+                className={`flex-1 px-4 py-3 rounded-r-xl bg-slate-50 dark:bg-slate-950 border ${errors.mobile ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
+                  } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none font-mono`}
               />
             </div>
             {errors.mobile && <p className="text-xs text-rose-500 font-medium">{errors.mobile}</p>}
@@ -172,11 +170,10 @@ export const Step3ContactAddress: React.FC = () => {
               type="button"
               onClick={handleSendMobileOtp}
               disabled={isSendingMobileOtp || mobileVerified || mobile.length !== 10}
-              className={`mt-2 flex items-center justify-center space-x-2 w-full py-2.5 px-3 rounded-xl text-xs font-semibold transition-all ${
-                mobileVerified
+              className={`mt-2 flex items-center justify-center space-x-2 w-full py-2.5 px-3 rounded-xl text-xs font-semibold transition-all ${mobileVerified
                   ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 cursor-default'
                   : 'bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 border border-brand-200 dark:border-brand-800 hover:bg-brand-100 dark:hover:bg-brand-900 disabled:opacity-50 disabled:cursor-not-allowed'
-              }`}
+                }`}
             >
               {isSendingMobileOtp ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -208,9 +205,8 @@ export const Step3ContactAddress: React.FC = () => {
                   placeholder="e.g. 560001"
                   value={currentAddress.pincode}
                   onChange={(e) => handleCurrentPincodeLookup(e.target.value.replace(/\D/g, ''))}
-                  className={`w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border font-mono ${
-                    errors['currentAddress.pincode'] ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
-                  } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none`}
+                  className={`w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border font-mono ${errors['currentAddress.pincode'] ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
+                    } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none`}
                 />
                 {isSearchingPin && (
                   <Loader2 className="w-4 h-4 text-brand-500 animate-spin absolute right-3 top-3" />
@@ -252,9 +248,8 @@ export const Step3ContactAddress: React.FC = () => {
               placeholder="e.g. #402, Sunshine Apartments, 1st Cross, Indiranagar"
               value={currentAddress.street}
               onChange={(e) => updateStep3({ currentAddress: { ...currentAddress, street: e.target.value } })}
-              className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border ${
-                errors['currentAddress.street'] ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
-              } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none`}
+              className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border ${errors['currentAddress.street'] ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
+                } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none`}
             />
             {errors['currentAddress.street'] && <p className="text-xs text-rose-500 font-medium">{errors['currentAddress.street']}</p>}
           </div>
