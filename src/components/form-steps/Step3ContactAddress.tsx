@@ -33,7 +33,6 @@ export const Step3ContactAddress: React.FC = () => {
               state: res.state,
             },
           });
-          showToast(`City (${res.city}) and State (${res.state}) auto-populated!`, 'success');
         }
       } finally {
         setIsSearchingPin(false);
@@ -57,7 +56,6 @@ export const Step3ContactAddress: React.FC = () => {
               state: res.state,
             },
           });
-          showToast(`Permanent address city & state auto-populated!`, 'success');
         }
       } finally {
         setIsSearchingPermPin(false);
