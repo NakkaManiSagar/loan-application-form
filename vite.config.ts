@@ -4,7 +4,7 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: './',
+  base: '/loan-application-form/',
   plugins: [react()],
   resolve: {
     alias: {
