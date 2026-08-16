@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useFormContext } from '../../context/FormContext';
 import { lookupPincodeAPI, generateMobileOtpAPI, verifyMobileOtpAPI } from '../../utils/verifications';
 import { Mail, Phone, MapPin, Building, ArrowRight, ArrowLeft, Loader2, KeyRound, CheckCircle2, ShieldCheck, X } from 'lucide-react';
+import { INDIAN_STATES, getDistrictsForState } from '../../utils/indianLocationData';
 
 export const Step3ContactAddress: React.FC = () => {
   const { state, updateStep3, nextStep, prevStep, errors, showToast } = useFormContext();
@@ -215,28 +216,48 @@ export const Step3ContactAddress: React.FC = () => {
               {errors['currentAddress.pincode'] && <p className="text-xs text-rose-500 font-medium">{errors['currentAddress.pincode']}</p>}
             </div>
 
-            {/* City */}
+            {/* City / District Dropdown */}
             <div className="space-y-2">
               <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">City / District</label>
-              <input
-                type="text"
-                placeholder="Gunter"
+              <select
                 value={currentAddress.city}
                 onChange={(e) => updateStep3({ currentAddress: { ...currentAddress, city: e.target.value } })}
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none"
-              />
+              >
+                <option value="">Select District / City</option>
+                {getDistrictsForState(currentAddress.state, currentAddress.city).map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {/* State */}
+            {/* State Dropdown */}
             <div className="space-y-2">
               <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">State</label>
-              <input
-                type="text"
-                placeholder="Andhra Pradesh"
+              <select
                 value={currentAddress.state}
-                onChange={(e) => updateStep3({ currentAddress: { ...currentAddress, state: e.target.value } })}
+                onChange={(e) => {
+                  const newState = e.target.value;
+                  const districts = getDistrictsForState(newState);
+                  updateStep3({
+                    currentAddress: {
+                      ...currentAddress,
+                      state: newState,
+                      city: districts[0] || '',
+                    },
+                  });
+                }}
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none"
-              />
+              >
+                <option value="">Select State</option>
+                {INDIAN_STATES.map((st) => (
+                  <option key={st} value={st}>
+                    {st}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -326,23 +347,45 @@ export const Step3ContactAddress: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">City</label>
-                  <input
-                    type="text"
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">City / District</label>
+                  <select
                     value={permanentAddress.city}
                     onChange={(e) => updateStep3({ permanentAddress: { ...permanentAddress, city: e.target.value } })}
                     className="w-full px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white outline-none"
-                  />
+                  >
+                    <option value="">Select District / City</option>
+                    {getDistrictsForState(permanentAddress.state, permanentAddress.city).map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">State</label>
-                  <input
-                    type="text"
+                  <select
                     value={permanentAddress.state}
-                    onChange={(e) => updateStep3({ permanentAddress: { ...permanentAddress, state: e.target.value } })}
+                    onChange={(e) => {
+                      const newState = e.target.value;
+                      const districts = getDistrictsForState(newState);
+                      updateStep3({
+                        permanentAddress: {
+                          ...permanentAddress,
+                          state: newState,
+                          city: districts[0] || '',
+                        },
+                      });
+                    }}
                     className="w-full px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white outline-none"
-                  />
+                  >
+                    <option value="">Select State</option>
+                    {INDIAN_STATES.map((st) => (
+                      <option key={st} value={st}>
+                        {st}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
