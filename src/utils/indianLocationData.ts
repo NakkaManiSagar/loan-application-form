@@ -299,12 +299,16 @@ export const STATE_DISTRICTS: Record<string, string[]> = {
  * If the current selected city is not in the predefined list, includes it as a custom entry so no user value is lost.
  */
 export function getDistrictsForState(stateName: string, currentCity: string = ''): string[] {
+  if (!stateName) {
+    return currentCity ? [currentCity] : [];
+  }
+
   const list = STATE_DISTRICTS[stateName] || [
-    'Central / Main District',
-    'North Zone',
-    'South Zone',
-    'East Zone',
-    'West Zone',
+    'Central District',
+    'North District',
+    'South District',
+    'East District',
+    'West District',
   ];
 
   if (currentCity && !list.includes(currentCity)) {

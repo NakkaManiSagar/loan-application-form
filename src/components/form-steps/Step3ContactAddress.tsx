@@ -196,43 +196,6 @@ export const Step3ContactAddress: React.FC = () => {
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {/* Pincode with Autocomplete trigger */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Pincode (6 Digits)</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  maxLength={6}
-                  placeholder="e.g. 560001"
-                  value={currentAddress.pincode}
-                  onChange={(e) => handleCurrentPincodeLookup(e.target.value.replace(/\D/g, ''))}
-                  className={`w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border font-mono ${errors['currentAddress.pincode'] ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
-                    } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none`}
-                />
-                {isSearchingPin && (
-                  <Loader2 className="w-4 h-4 text-brand-500 animate-spin absolute right-3 top-3" />
-                )}
-              </div>
-              {errors['currentAddress.pincode'] && <p className="text-xs text-rose-500 font-medium">{errors['currentAddress.pincode']}</p>}
-            </div>
-
-            {/* City / District Dropdown */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">City / District</label>
-              <select
-                value={currentAddress.city}
-                onChange={(e) => updateStep3({ currentAddress: { ...currentAddress, city: e.target.value } })}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none"
-              >
-                <option value="">Select District / City</option>
-                {getDistrictsForState(currentAddress.state, currentAddress.city).map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
-              </select>
-            </div>
-
             {/* State Dropdown */}
             <div className="space-y-2">
               <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">State</label>
@@ -258,6 +221,43 @@ export const Step3ContactAddress: React.FC = () => {
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* City / District Dropdown */}
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">City / District</label>
+              <select
+                value={currentAddress.city}
+                onChange={(e) => updateStep3({ currentAddress: { ...currentAddress, city: e.target.value } })}
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none"
+              >
+                <option value="">{currentAddress.state ? 'Select District / City' : '← Select State First'}</option>
+                {getDistrictsForState(currentAddress.state, currentAddress.city).map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Pincode with Autocomplete trigger */}
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Pincode (6 Digits)</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  maxLength={6}
+                  placeholder="e.g. 522617"
+                  value={currentAddress.pincode}
+                  onChange={(e) => handleCurrentPincodeLookup(e.target.value.replace(/\D/g, ''))}
+                  className={`w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border font-mono ${errors['currentAddress.pincode'] ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
+                    } text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none`}
+                />
+                {isSearchingPin && (
+                  <Loader2 className="w-4 h-4 text-brand-500 animate-spin absolute right-3 top-3" />
+                )}
+              </div>
+              {errors['currentAddress.pincode'] && <p className="text-xs text-rose-500 font-medium">{errors['currentAddress.pincode']}</p>}
             </div>
           </div>
 
@@ -330,39 +330,6 @@ export const Step3ContactAddress: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Pincode</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      maxLength={6}
-                      placeholder="6 Digits"
-                      value={permanentAddress.pincode}
-                      onChange={(e) => handlePermPincodeLookup(e.target.value.replace(/\D/g, ''))}
-                      className="w-full px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white outline-none"
-                    />
-                    {isSearchingPermPin && (
-                      <Loader2 className="w-4 h-4 text-brand-500 animate-spin absolute right-3 top-2.5" />
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">City / District</label>
-                  <select
-                    value={permanentAddress.city}
-                    onChange={(e) => updateStep3({ permanentAddress: { ...permanentAddress, city: e.target.value } })}
-                    className="w-full px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white outline-none"
-                  >
-                    <option value="">Select District / City</option>
-                    {getDistrictsForState(permanentAddress.state, permanentAddress.city).map((d) => (
-                      <option key={d} value={d}>
-                        {d}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-2">
                   <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">State</label>
                   <select
                     value={permanentAddress.state}
@@ -386,6 +353,39 @@ export const Step3ContactAddress: React.FC = () => {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">City / District</label>
+                  <select
+                    value={permanentAddress.city}
+                    onChange={(e) => updateStep3({ permanentAddress: { ...permanentAddress, city: e.target.value } })}
+                    className="w-full px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white outline-none"
+                  >
+                    <option value="">{permanentAddress.state ? 'Select District / City' : '← Select State First'}</option>
+                    {getDistrictsForState(permanentAddress.state, permanentAddress.city).map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Pincode (6 Digits)</label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      maxLength={6}
+                      placeholder="6 Digits"
+                      value={permanentAddress.pincode}
+                      onChange={(e) => handlePermPincodeLookup(e.target.value.replace(/\D/g, ''))}
+                      className="w-full px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white outline-none"
+                    />
+                    {isSearchingPermPin && (
+                      <Loader2 className="w-4 h-4 text-brand-500 animate-spin absolute right-3 top-2.5" />
+                    )}
+                  </div>
                 </div>
               </div>
 
