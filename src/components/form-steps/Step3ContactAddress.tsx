@@ -203,12 +203,11 @@ export const Step3ContactAddress: React.FC = () => {
                 value={currentAddress.state}
                 onChange={(e) => {
                   const newState = e.target.value;
-                  const districts = getDistrictsForState(newState);
                   updateStep3({
                     currentAddress: {
                       ...currentAddress,
                       state: newState,
-                      city: districts[0] || '',
+                      city: '',
                     },
                   });
                 }}
@@ -335,12 +334,11 @@ export const Step3ContactAddress: React.FC = () => {
                     value={permanentAddress.state}
                     onChange={(e) => {
                       const newState = e.target.value;
-                      const districts = getDistrictsForState(newState);
                       updateStep3({
                         permanentAddress: {
                           ...permanentAddress,
                           state: newState,
-                          city: districts[0] || '',
+                          city: '',
                         },
                       });
                     }}
