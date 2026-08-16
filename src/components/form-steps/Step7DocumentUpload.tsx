@@ -112,8 +112,11 @@ export const Step7DocumentUpload: React.FC = () => {
         </div>
       </div>
 
-      {/* Preview Modal */}
-      <ImagePreviewModal doc={previewDoc} onClose={() => setPreviewDoc(null)} />
+      <ImagePreviewModal
+        doc={previewDoc}
+        onClose={() => setPreviewDoc(null)}
+        onRemove={previewDoc ? () => handleRemove(previewDoc.docType) : undefined}
+      />
 
       {/* Buttons */}
       <div className="flex justify-between pt-4">
