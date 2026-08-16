@@ -275,9 +275,26 @@ export const Step2PersonalKYC: React.FC = () => {
               <KeyRound className="w-6 h-6" />
             </div>
 
-            <div className="text-center">
+            <div className="text-center space-y-2">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">Enter Aadhaar Security OTP</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{otpMessage}</p>
+              
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs space-y-1.5 text-left">
+                <div className="flex justify-between items-center text-slate-500 dark:text-slate-400">
+                  <span>Verification Type:</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">UIDAI Aadhaar e-KYC</span>
+                </div>
+                <div className="flex justify-between items-center text-slate-500 dark:text-slate-400">
+                  <span>Registered Mobile:</span>
+                  <span className="font-mono font-bold text-brand-600 dark:text-brand-400">
+                    +91 ******{state.step3.mobile ? state.step3.mobile.slice(-4) : (aadhaarNumber ? aadhaarNumber.slice(-4) : '9876')}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200 dark:border-slate-800">
+                  <span>Code Validity:</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">10 Minutes</span>
+                </div>
+              </div>
+              {otpMessage && <p className="text-[11px] text-slate-500 dark:text-slate-400 text-center font-medium pt-1">{otpMessage}</p>}
             </div>
 
             <input

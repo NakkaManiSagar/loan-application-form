@@ -396,7 +396,10 @@ export const Step3ContactAddress: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">Enter Mobile Verification OTP</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{mobileOtpMessage}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Mobile Number: <span className="font-mono font-bold text-brand-600 dark:text-brand-400">+91 ******{mobile.slice(-4)}</span>
+                </p>
+                {mobileOtpMessage && <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">{mobileOtpMessage}</p>}
               </div>
             </div>
 

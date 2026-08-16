@@ -91,11 +91,10 @@ export async function sendRealSmsOtp(
   }
 
   const masked = '******' + cleanIdentifier.slice(-4);
-  const typeLabel = targetType === 'aadhaar' ? 'Aadhaar Registered Mobile' : 'Mobile Phone';
 
   return {
     success: true,
-    message: `Security OTP sent via SMS to ${typeLabel} (+91 ${masked}). Valid for 10 minutes.`,
+    message: `Security OTP sent via SMS to +91 ${masked}. Valid for 10 minutes.`,
     otp: generatedOtp,
   };
 }
