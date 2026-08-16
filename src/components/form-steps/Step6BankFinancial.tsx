@@ -55,7 +55,7 @@ export const Step6BankFinancial: React.FC = () => {
       </div>
 
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
-        
+
         {/* IFSC Lookup Box */}
         <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3">
           <div className="flex items-center justify-between">
@@ -79,9 +79,8 @@ export const Step6BankFinancial: React.FC = () => {
               placeholder="e.g. SBIN0001234 or HDFC0000123"
               value={ifscCode}
               onChange={(e) => updateStep6({ ifscCode: e.target.value.toUpperCase(), ifscVerified: false })}
-              className={`flex-1 px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border uppercase font-mono tracking-wider ${
-                errors.ifscCode ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
-              } text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500`}
+              className={`flex-1 px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border uppercase font-mono tracking-wider ${errors.ifscCode ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
+                } text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500`}
             />
             <button
               type="button"
@@ -112,9 +111,8 @@ export const Step6BankFinancial: React.FC = () => {
               placeholder="e.g. HDFC Bank Ltd"
               value={bankName}
               onChange={(e) => updateStep6({ bankName: e.target.value })}
-              className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border ${
-                errors.bankName ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
-              } text-slate-900 dark:text-white outline-none`}
+              className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border ${errors.bankName ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
+                } text-slate-900 dark:text-white outline-none`}
             />
             {errors.bankName && <p className="text-xs text-rose-500 font-medium">{errors.bankName}</p>}
           </div>
@@ -130,11 +128,10 @@ export const Step6BankFinancial: React.FC = () => {
                   key={acc.id}
                   type="button"
                   onClick={() => updateStep6({ accountType: acc.id as AccountType })}
-                  className={`py-3 px-3 text-xs font-bold rounded-xl border transition-all ${
-                    accountType === acc.id
+                  className={`py-3 px-3 text-xs font-bold rounded-xl border transition-all ${accountType === acc.id
                       ? 'bg-brand-600 border-brand-600 text-white shadow-md'
                       : 'bg-slate-50 dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300'
-                  }`}
+                    }`}
                 >
                   {acc.label}
                 </button>
@@ -156,9 +153,8 @@ export const Step6BankFinancial: React.FC = () => {
               placeholder="e.g. 5010023456789"
               value={accountNumber}
               onChange={(e) => updateStep6({ accountNumber: e.target.value.replace(/\D/g, '') })}
-              className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border font-mono tracking-widest ${
-                errors.accountNumber ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
-              } text-slate-900 dark:text-white outline-none`}
+              className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border font-mono tracking-widest ${errors.accountNumber ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
+                } text-slate-900 dark:text-white outline-none`}
             />
             {errors.accountNumber && <p className="text-xs text-rose-500 font-medium">{errors.accountNumber}</p>}
           </div>
@@ -170,9 +166,8 @@ export const Step6BankFinancial: React.FC = () => {
               placeholder="Re-enter Account Number"
               value={confirmAccountNumber}
               onChange={(e) => updateStep6({ confirmAccountNumber: e.target.value.replace(/\D/g, '') })}
-              className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border font-mono tracking-widest ${
-                errors.confirmAccountNumber ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
-              } text-slate-900 dark:text-white outline-none`}
+              className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border font-mono tracking-widest ${errors.confirmAccountNumber ? 'border-rose-500' : 'border-slate-300 dark:border-slate-700'
+                } text-slate-900 dark:text-white outline-none`}
             />
             {errors.confirmAccountNumber && <p className="text-xs text-rose-500 font-medium">{errors.confirmAccountNumber}</p>}
           </div>

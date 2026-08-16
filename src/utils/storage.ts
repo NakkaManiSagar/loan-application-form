@@ -34,7 +34,7 @@ export const INITIAL_FORM_STATE: FormState = {
   step4: {
     employmentType: 'salaried',
     companyName: '',
-    designation: 'Software Engineer',
+    designation: '',
     totalExperienceYears: 4,
     netMonthlyIncome: 85000,
     existingMonthlyEmis: 12000,

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { RotateCcw, Trash2, Check, PenTool } from 'lucide-react';
 
 interface SignatureCanvasProps {
@@ -9,11 +9,51 @@ interface SignatureCanvasProps {
 
 export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({ value, onChange, error }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [strokeColor, setStrokeColor] = useState('#026fc7');
   const strokeWidth = 3;
   const [hasStrokes, setHasStrokes] = useState(false);
   const [history, setHistory] = useState<ImageData[]>([]);
+
+  // Dynamically scale canvas resolution to match container bounding box
+  const syncCanvasResolution = useCallback(() => {
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
+
+    const rect = container.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      // Save current drawing content before resize
+      const ctx = canvas.getContext('2d');
+      let currentData: ImageData | null = null;
+      if (ctx && canvas.width > 0 && canvas.height > 0) {
+        try {
+          currentData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        } catch {
+          currentData = null;
+        }
+      }
+
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+
+      // Restore drawing content if canvas was resized
+      if (ctx && currentData) {
+        try {
+          ctx.putImageData(currentData, 0, 0);
+        } catch {
+          // Ignore
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    syncCanvasResolution();
+    window.addEventListener('resize', syncCanvasResolution);
+    return () => window.removeEventListener('resize', syncCanvasResolution);
+  }, [syncCanvasResolution]);
 
   // Load existing signature dataUrl if present
   useEffect(() => {
@@ -24,7 +64,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({ value, onChang
         const img = new Image();
         img.onload = () => {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.drawImage(img, 0, 0);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           setHasStrokes(true);
         };
         img.src = value;
@@ -37,8 +77,36 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({ value, onChang
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    setHistory((prev) => [...prev, data]);
+    try {
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      setHistory((prev) => [...prev, data]);
+    } catch {
+      // Ignore
+    }
+  };
+
+  /**
+   * Accurate HTML5 Canvas Coordinate Mapping
+   * Multiplies CSS bounding rect offsets by scaling ratio canvas.width / rect.width
+   * to align marker stroke 1:1 directly under mouse or touch cursor.
+   */
+  const getCanvasCoordinates = (
+    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+  ) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+
+    const rect = canvas.getBoundingClientRect();
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
+    const scaleX = rect.width > 0 ? canvas.width / rect.width : 1;
+    const scaleY = rect.height > 0 ? canvas.height / rect.height : 1;
+
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY,
+    };
   };
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
@@ -51,9 +119,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({ value, onChang
     setIsDrawing(true);
     setHasStrokes(true);
 
-    const rect = canvas.getBoundingClientRect();
-    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+    const { x, y } = getCanvasCoordinates(e);
 
     ctx.beginPath();
     ctx.moveTo(x, y);
@@ -70,9 +136,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({ value, onChang
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+    const { x, y } = getCanvasCoordinates(e);
 
     ctx.lineTo(x, y);
     ctx.stroke();
@@ -164,14 +228,15 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({ value, onChang
         </div>
       </div>
 
-      {/* Canvas Surface */}
-      <div className={`relative border-2 border-dashed rounded-xl bg-slate-50 dark:bg-slate-950 overflow-hidden transition-all ${
-        error ? 'border-rose-500' : hasStrokes ? 'border-brand-500/60' : 'border-slate-300 dark:border-slate-700'
-      }`}>
+      {/* Canvas Surface Container */}
+      <div 
+        ref={containerRef}
+        className={`relative border-2 border-dashed rounded-xl bg-slate-50 dark:bg-slate-950 overflow-hidden transition-all h-44 ${
+          error ? 'border-rose-500' : hasStrokes ? 'border-brand-500/60' : 'border-slate-300 dark:border-slate-700'
+        }`}
+      >
         <canvas
           ref={canvasRef}
-          width={600}
-          height={200}
           onMouseDown={startDrawing}
           onMouseMove={draw}
           onMouseUp={stopDrawing}
@@ -179,7 +244,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({ value, onChang
           onTouchStart={startDrawing}
           onTouchMove={draw}
           onTouchEnd={stopDrawing}
-          className="w-full h-44 touch-none cursor-crosshair"
+          className="w-full h-full touch-none cursor-crosshair block"
         />
 
         {!hasStrokes && (
