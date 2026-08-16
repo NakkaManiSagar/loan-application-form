@@ -63,13 +63,13 @@ describe('Real-World & Verhoeff Validated Verification Engine', () => {
 
   it('should verify OTP against dynamic active OTP session', async () => {
     const otpRes = await generateAadhaarOtpAPI('987654321098', '9876543210');
-    const verifyRes = await verifyAadhaarOtpAPI(otpRes.mockOtp, '9876543210');
+    const verifyRes = await verifyAadhaarOtpAPI(otpRes.mockOtp, '987654321098');
     expect(verifyRes.verified).toBe(true);
   });
 
   it('should reject incorrect OTP', async () => {
     await generateAadhaarOtpAPI('987654321098', '9876543210');
-    const verifyRes = await verifyAadhaarOtpAPI('000000', '9876543210');
+    const verifyRes = await verifyAadhaarOtpAPI('000000', '987654321098');
     expect(verifyRes.verified).toBe(false);
   });
 

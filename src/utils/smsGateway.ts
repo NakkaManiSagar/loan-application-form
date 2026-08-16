@@ -27,8 +27,9 @@ export function generateDynamicOtp(): string {
  * Sends a real-time OTP via configured SMS Gateway or dynamic secure channel.
  */
 export async function sendRealSmsOtp(
-  identifier: string, // Mobile number or Aadhaar
+  identifier: string, // Mobile number or Aadhaar number
   targetType: 'mobile' | 'aadhaar',
+  mobileContact?: string,
   customApiKey?: string
 ): Promise<{ success: boolean; message: string; otp: string }> {
   await new Promise((resolve) => setTimeout(resolve, 800)); // Network delay
@@ -63,6 +64,14 @@ export async function sendRealSmsOtp(
     attempts: 0,
   };
 
+  // Extract mobile last 4 digits (never use Aadhaar card number digits as mobile digits)
+  let last4 = '9876';
+  if (targetType === 'mobile') {
+    last4 = cleanIdentifier.slice(-4);
+  } else if (mobileContact && mobileContact.length === 10) {
+    last4 = mobileContact.slice(-4);
+  }
+
   // If Fast2SMS or Twilio API key is set in environment/config, invoke external endpoint
   if (customApiKey && targetType === 'mobile') {
     try {
@@ -81,7 +90,7 @@ export async function sendRealSmsOtp(
       if (response.ok) {
         return {
           success: true,
-          message: `Security OTP sent via SMS to +91 ******${cleanIdentifier.slice(-4)}. Valid for 10 minutes.`,
+          message: `Security OTP sent via SMS to +91 ******${last4}. Valid for 10 minutes.`,
           otp: generatedOtp,
         };
       }
@@ -90,7 +99,7 @@ export async function sendRealSmsOtp(
     }
   }
 
-  const masked = '******' + cleanIdentifier.slice(-4);
+  const masked = '******' + last4;
 
   return {
     success: true,

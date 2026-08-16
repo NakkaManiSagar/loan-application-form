@@ -286,7 +286,7 @@ export const Step2PersonalKYC: React.FC = () => {
                 <div className="flex justify-between items-center text-slate-500 dark:text-slate-400">
                   <span>Registered Mobile:</span>
                   <span className="font-mono font-bold text-brand-600 dark:text-brand-400">
-                    +91 ******{state.step3.mobile ? state.step3.mobile.slice(-4) : (aadhaarNumber ? aadhaarNumber.slice(-4) : '9876')}
+                    +91 ******{state.step3.mobile && state.step3.mobile.length === 10 ? state.step3.mobile.slice(-4) : '9876'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200 dark:border-slate-800">

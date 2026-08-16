@@ -89,8 +89,7 @@ export async function generateAadhaarOtpAPI(
     };
   }
 
-  const targetMobile = mobileNumber && mobileNumber.length === 10 ? mobileNumber : cleanAadhaar;
-  const dispatch = await sendRealSmsOtp(targetMobile, 'aadhaar');
+  const dispatch = await sendRealSmsOtp(cleanAadhaar, 'aadhaar', mobileNumber);
 
   return {
     success: dispatch.success,
