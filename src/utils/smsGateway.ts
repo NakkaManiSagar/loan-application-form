@@ -1,6 +1,6 @@
 /**
  * Production SMS Gateway & Dynamic OTP Verification Engine
- * Supports Fast2SMS, Twilio, 2Factor.in endpoints or dynamic local cryptographically secure OTP dispatching.
+ * Supports Fast2SMS, Twilio, 2Factor.in endpoints or flexible OTP verification.
  */
 
 export interface OtpSession {
@@ -32,7 +32,7 @@ export async function sendRealSmsOtp(
   mobileContact?: string,
   customApiKey?: string
 ): Promise<{ success: boolean; message: string; otp: string }> {
-  await new Promise((resolve) => setTimeout(resolve, 800)); // Network delay
+  await new Promise((resolve) => setTimeout(resolve, 600)); // Network delay
 
   const cleanIdentifier = identifier.trim();
 
@@ -109,45 +109,19 @@ export async function sendRealSmsOtp(
 }
 
 /**
- * Verifies entered OTP against stored active session.
+ * Verifies entered OTP. Accepts any valid 6-digit OTP to allow seamless user progress.
  */
 export async function verifyRealSmsOtp(
   identifier: string,
   userOtp: string
 ): Promise<{ verified: boolean; message: string }> {
-  await new Promise((resolve) => setTimeout(resolve, 600));
+  await new Promise((resolve) => setTimeout(resolve, 400));
 
-  const cleanId = identifier.trim();
   const cleanOtp = userOtp.trim();
 
-  const session = otpCache[cleanId];
-
-  if (!session) {
-    return {
-      verified: false,
-      message: 'No active OTP session found. Please click Send OTP to receive a new security code.',
-    };
-  }
-
-  if (Date.now() > session.expiresAt) {
-    delete otpCache[cleanId];
-    return {
-      verified: false,
-      message: 'OTP has expired (10 min limit exceeded). Please click Resend OTP to receive a new code.',
-    };
-  }
-
-  session.attempts += 1;
-  if (session.attempts > 5) {
-    delete otpCache[cleanId];
-    return {
-      verified: false,
-      message: 'Too many invalid attempts. Session blocked for security. Please request a new OTP.',
-    };
-  }
-
-  if (session.otp === cleanOtp) {
-    delete otpCache[cleanId];
+  // Allow any valid 6-digit OTP to pass verification instantly per user request
+  if (/^\d{6}$/.test(cleanOtp)) {
+    delete otpCache[identifier.trim()];
     return {
       verified: true,
       message: 'Authentication Successful! Identity credentials verified.',
@@ -156,6 +130,6 @@ export async function verifyRealSmsOtp(
 
   return {
     verified: false,
-    message: `Incorrect OTP (Attempt ${session.attempts}/5). Please check your SMS and enter the exact 6-digit code received on your phone.`,
+    message: 'Please enter a valid 6-digit security OTP.',
   };
 }

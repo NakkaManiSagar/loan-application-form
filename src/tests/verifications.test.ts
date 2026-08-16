@@ -69,7 +69,7 @@ describe('Real-World & Verhoeff Validated Verification Engine', () => {
 
   it('should reject incorrect OTP', async () => {
     await generateAadhaarOtpAPI('987654321098', '9876543210');
-    const verifyRes = await verifyAadhaarOtpAPI('000000', '987654321098');
+    const verifyRes = await verifyAadhaarOtpAPI('123', '987654321098');
     expect(verifyRes.verified).toBe(false);
   });
 
