@@ -165,7 +165,7 @@ npx vitest run
    ```bash
    npm run dev
    ```
-   *The application will start at `http://127.0.0.1:3000/` or `http://localhost:5173/`.*
+   *The application will start at `https://loan-application-form-seven.vercel.app/`.*
 
 4. Build production bundle:
    ```bash
